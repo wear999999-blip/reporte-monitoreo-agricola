@@ -1,39 +1,10 @@
-name: Actualizar reporte de monitoreo agrícola
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
-
-permissions:
-  contents: write
-
-jobs:
-  generar-reporte:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Descargar repositorio
-        uses: actions/checkout@v4
-
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Instalar dependencias
-        run: pip install -r requirements.txt
-
-      - name: Generar Excel
-        run: python monitoreo_agricola.py
-
-      - name: Publicar Excel
+- name: Publicar Excel
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ARCHIVO=$(find . -name "Reporte_Monitoreo_Agricola.xlsx" -type f | head -n 1)
+          ARCHIVO="Reporte_Monitoreo_Agricola.xlsx"
 
-          if [ -z "$ARCHIVO" ]; then
+          if [ ! -f "$ARCHIVO" ]; then
             echo "No se encontró el Excel generado"
             exit 1
           fi
