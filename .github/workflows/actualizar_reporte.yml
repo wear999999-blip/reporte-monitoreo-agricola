@@ -1,4 +1,33 @@
-- name: Publicar Excel
+name: Actualizar reporte de monitoreo agrícola
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  generar-reporte:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Generar Excel
+        run: python monitoreo_agricola.py
+
+      - name: Publicar Excel
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
